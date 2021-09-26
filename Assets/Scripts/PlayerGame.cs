@@ -4,6 +4,7 @@ using UnityEngine;
 public class PlayerGame : MonoBehaviour
 {
 	[SerializeField] private uint _seed = 2;
+	[SerializeField] private float _dropPeriod = 1;
 	
 	private TetrisModel _model;
 	private TetrisView _view;
@@ -22,10 +23,16 @@ public class PlayerGame : MonoBehaviour
 	{
 		_view.Init(_model);
 		_controller.Init(_model);
+		_controller.FigureDropPeriod = _dropPeriod;
 	}
 
 	private void Update()
 	{
 		_controller.Update();
+	}
+
+	private void OnDestroy()
+	{
+		_controller.SaveSession();
 	}
 }

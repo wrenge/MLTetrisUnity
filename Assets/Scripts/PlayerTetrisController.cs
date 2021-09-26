@@ -1,30 +1,71 @@
 ﻿using System;
-using Unity.Mathematics;
+using System.IO;
 using UnityEngine;
 
-public class PlayerTetrisController
+public class PlayerTetrisController : TetrisController
 {
-	private TetrisModel _model;
+	public float FigureDropPeriod = 1;
+	private const string SessionNumberKey = "Sessions";
+	private const string SessionSavePath = "Sessions/Session_{0}.json";
+	private SessionInfo _sessionInfo;
+	private float _nextDropTime = 0;
 
-	public void Init(TetrisModel model)
+	protected override void Reset()
 	{
-		_model = model;
+		base.Reset();
+
+		if (_sessionInfo != null)
+			SaveSession();
+
+		int sessionNumber = PlayerPrefs.GetInt(SessionNumberKey, 0) + 1;
+		_sessionInfo = new SessionInfo
+		{
+			SessionNumber = sessionNumber,
+			Dimensions = Model.Dimensions,
+			Seed = Model.Seed
+		};
+		_nextDropTime = Time.time + FigureDropPeriod;
 	}
 
-	public void Update()
+	protected override void OnUpdate()
 	{
-		if(_model == null)
+		if(Model.CanPlay)
+		{
+			if (Input.GetKeyDown(KeyCode.DownArrow))
+				MakeMove(TetrisMove.Down);
+			if (Input.GetKeyDown(KeyCode.RightArrow))
+				MakeMove(TetrisMove.Right);
+			if (Input.GetKeyDown(KeyCode.LeftArrow))
+				MakeMove(TetrisMove.Left);
+			if (Input.GetKeyDown(KeyCode.UpArrow))
+				MakeMove(TetrisMove.Rotate);
+			if (Input.GetKeyDown(KeyCode.Space))
+				MakeMove(TetrisMove.Jump);
+			if (Time.time >= _nextDropTime)
+				MakeMove(TetrisMove.Ignore);
+		}
+	}
+
+	protected override void MakeMove(TetrisMove move)
+	{
+		if(move != TetrisMove.Reset && move != TetrisMove.Quit)
+			_sessionInfo.Moves.Add(new MoveInfo(Model, move));
+		if (move == TetrisMove.Down || move == TetrisMove.Jump || move == TetrisMove.Ignore)
+			_nextDropTime = Time.time + FigureDropPeriod;
+
+		base.MakeMove(move);
+	}
+
+	public void SaveSession()
+	{
+		if (_sessionInfo == null)
 			return;
 
-		if (Input.GetKeyDown(KeyCode.DownArrow))
-			_model.MoveFigure(new int2(0, 1));
-		if (Input.GetKeyDown(KeyCode.RightArrow))
-			_model.MoveFigure(new int2(1, 0));
-		if (Input.GetKeyDown(KeyCode.LeftArrow))
-			_model.MoveFigure(new int2(-1, 0));
-		if (Input.GetKeyDown(KeyCode.UpArrow))
-			_model.RotateFigure();
-		if (Input.GetKeyDown(KeyCode.Space))
-			_model.DropFigure();
+		PlayerPrefs.SetInt(SessionNumberKey, _sessionInfo.SessionNumber);
+		PlayerPrefs.Save();
+		string sessionJson = JsonUtility.ToJson(_sessionInfo);
+		Directory.CreateDirectory("Sessions");
+		using var file = File.CreateText(string.Format(SessionSavePath, _sessionInfo.SessionNumber));
+		file.Write(sessionJson);
 	}
 }

@@ -9,8 +9,8 @@ public class TetrisModel
 	public uint Seed { get; set; }
 	public bool CanPlay { get; private set; }
 	public int MaxColors { get; set; }
-	public int TotalMovesCount { get; private set; }
-	public int MovesCount { get; private set; }
+	public int TotalMoveCount { get; private set; }
+	public int MoveCount { get; private set; }
 
 	private Random _random;
 	private readonly FieldElement[,] _viewBuffer;
@@ -29,7 +29,7 @@ public class TetrisModel
 	public void Reset()
 	{
 		_random = new Random(Seed);
-		TotalMovesCount = MovesCount = 0;
+		TotalMoveCount = MoveCount = 0;
 
 		for (int y = 0; y < Dimensions.y; y++)
 		{
@@ -45,7 +45,8 @@ public class TetrisModel
 		MergeFigure(Field);
 		BreakLines();
 		CreateNewFigure();
-		CanPlay = IsFigureOverlapping();
+		CanPlay = !IsFigureOverlapping();
+		MoveCount = 0;
 	}
 
 	private void CreateNewFigure()
@@ -159,7 +160,7 @@ public class TetrisModel
 
 	public void DropFigure()
 	{
-		while (MoveFigure(new int2(0, 1)))
+		while (MoveFigure(new int2(0, 1), false))
 		{
 		}
 		IncMoves();
@@ -176,7 +177,7 @@ public class TetrisModel
 
 	private void IncMoves()
 	{
-		MovesCount++;
-		TotalMovesCount++;
+		MoveCount++;
+		TotalMoveCount++;
 	}
 }

@@ -60,6 +60,10 @@
      <Compile Include="Assets\Scripts\TetrisView.cs" />
      <Compile Include="Assets\Scripts\PlayerTetrisController.cs" />
      <Compile Include="Assets\Scripts\PlayerGame.cs" />
+     <Compile Include="Assets\Scripts\SessionInfo.cs" />
+     <Compile Include="Assets\Scripts\MoveInfo.cs" />
+     <Compile Include="Assets\Scripts\TetrisMove.cs" />
+     <Compile Include="Assets\Scripts\TetrisController.cs" />
  <Reference Include="UnityEngine">
  <HintPath>C:/Program Files/Unity/Hub/Editor/2020.3.7f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
  </Reference>
