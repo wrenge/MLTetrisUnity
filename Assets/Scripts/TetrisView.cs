@@ -25,6 +25,31 @@ public class TetrisView : MonoBehaviour
 		if (_blocks != null) 
 			ResetField();
 		CreateField();
+		
+		transform.localScale = Vector3.one;
+		transform.localPosition = Vector3.zero;
+		var viewBounds = new Bounds();
+		foreach (var block in _blocks)
+		{
+			viewBounds.Encapsulate(block.bounds);
+		}
+		
+		float screenRatio = Screen.width / (float)Screen.height;
+		float targetRatio = viewBounds.size.x / viewBounds.size.y;
+		float sizeRatio;
+		if (screenRatio >= targetRatio)
+		{
+			sizeRatio = 1 / viewBounds.extents.y;
+			transform.localScale = Vector3.one * sizeRatio;
+		}
+		else
+		{
+			float differenceInSize = targetRatio / screenRatio;
+			sizeRatio = 1 / (viewBounds.size.y / 2 * differenceInSize);
+			transform.localScale = Vector3.one * sizeRatio;
+		}
+ 
+		transform.localPosition = -viewBounds.center * sizeRatio;
 	}
 
 	private void ResetField()
