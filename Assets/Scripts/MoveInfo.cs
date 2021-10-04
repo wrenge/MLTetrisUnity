@@ -28,4 +28,6 @@ public struct MoveInfo
 		MoveNumber = model.MoveCount;
 		AbsoluteMoveNumber = model.TotalMoveCount;
 	}
+
+	public TetrisMove GetMove() => (TetrisMove) Output;
 }

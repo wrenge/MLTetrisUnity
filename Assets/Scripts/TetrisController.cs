@@ -4,6 +4,7 @@ using Unity.Mathematics;
 public class TetrisController
 {
 	protected TetrisModel Model;
+	public const string SessionSavePath = "Sessions/Session_{0}.json";
 
 	public void Init(TetrisModel model)
 	{
@@ -53,7 +54,6 @@ public class TetrisController
 
 	protected virtual void Reset()
 	{
-		Model.Seed++;
 		Model.Reset();
 	}
 

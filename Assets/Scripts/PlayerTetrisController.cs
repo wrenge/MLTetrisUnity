@@ -6,12 +6,12 @@ public class PlayerTetrisController : TetrisController
 {
 	public float FigureDropPeriod = 1;
 	private const string SessionNumberKey = "Sessions";
-	private const string SessionSavePath = "Sessions/Session_{0}.json";
 	private SessionInfo _sessionInfo;
 	private float _nextDropTime = 0;
 
 	protected override void Reset()
 	{
+		Model.Seed++;
 		base.Reset();
 
 		if (_sessionInfo != null)
