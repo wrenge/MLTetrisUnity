@@ -1,9 +1,11 @@
 ﻿using System;
 using Unity.Mathematics;
+using UnityEngine;
 
 public class TetrisController
 {
 	protected TetrisModel Model;
+	public bool IsPaused { get; set; }
 	public const string SessionSavePath = "Sessions/Session_{0}.json";
 
 	public void Init(TetrisModel model)
@@ -12,12 +14,12 @@ public class TetrisController
 		Reset();
 	}
 
-	public void Update()
+	public void Update(float deltaTime)
 	{
-		if(Model == null)
+		if(Model == null || !Model.CanPlay || IsPaused)
 			return;
 
-		OnUpdate();
+		OnUpdate(deltaTime);
 	}
 
 	protected virtual void MakeMove(TetrisMove move)
@@ -46,18 +48,19 @@ public class TetrisController
 				Reset();
 				break;
 			case TetrisMove.Quit:
+				Application.Quit();
 				break;
 			default:
 				throw new ArgumentOutOfRangeException(nameof(move), move, null);
 		}
 	}
 
-	protected virtual void Reset()
+	public virtual void Reset()
 	{
 		Model.Reset();
 	}
 
-	protected virtual void OnUpdate()
+	protected virtual void OnUpdate(float deltaTime)
 	{
 	}
 }

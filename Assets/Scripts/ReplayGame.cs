@@ -42,7 +42,7 @@ public class ReplayGame : MonoBehaviour
         if(_nextUpdateTime > Time.time)
             return;
 
-        _controller.Update();
+        _controller.Update(Time.deltaTime);
         _nextUpdateTime = Time.time + _updatePeriod;
     }
 }

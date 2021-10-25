@@ -1,0 +1,29 @@
+{
+    "TetrisAgent": {
+        "checkpoints": [
+            {
+                "steps": 226206,
+                "file_path": "results\\TetrisAgent\\TetrisAgent\\TetrisAgent-226206.onnx",
+                "reward": null,
+                "creation_time": 1635082942.4442172,
+                "auxillary_file_paths": [
+                    "results\\TetrisAgent\\TetrisAgent\\TetrisAgent-226206.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 226206,
+            "file_path": "results\\TetrisAgent\\TetrisAgent.onnx",
+            "reward": null,
+            "creation_time": 1635082942.4442172,
+            "auxillary_file_paths": [
+                "results\\TetrisAgent\\TetrisAgent\\TetrisAgent-226206.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "0.27.0",
+        "torch_version": "1.7.1+cu110"
+    }
+}

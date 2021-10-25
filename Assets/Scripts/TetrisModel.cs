@@ -1,9 +1,15 @@
 using System;
+using System.Collections.Generic;
 using Unity.Mathematics;
 using Random = Unity.Mathematics.Random;
 
 public class TetrisModel
 {
+	public event Action OnLineCleared;
+	public event Action OnFigureSet;
+	public event Action OnNewFigureCreated;
+	public event Action OnChanged;
+	public event Action OnGameOver;
 	public int2 Dimensions { get; }
 	public FieldElement[,] Field { get; private set; }
 	public uint Seed { get; set; }
@@ -35,7 +41,7 @@ public class TetrisModel
 		{
 			ClearRow(y);
 		}
-		
+
 		CreateNewFigure();
 		CanPlay = true;
 	}
@@ -43,9 +49,13 @@ public class TetrisModel
 	public void FreezeFigure()
 	{
 		MergeFigure(Field);
-		BreakLines();
+		OnFigureSet?.Invoke();
+		while (BreakLines()) { }
 		CreateNewFigure();
+		OnNewFigureCreated?.Invoke();
 		CanPlay = !IsFigureOverlapping();
+		if(!CanPlay)
+			OnGameOver?.Invoke();
 		MoveCount = 0;
 	}
 
@@ -69,18 +79,23 @@ public class TetrisModel
 		}
 	}
 
-	public void BreakLines()
+	public bool BreakLines()
 	{
+		var isCleared = false;
 		for (int y = Dimensions.y - 1; y >= 0; y--)
 		{
 			if (IsRowFull(y))
 			{
-				for (int y1 = y; y1 >= 1; y1--)
+				isCleared = true;
+				for (int y1 = y; y1 >= 0; y1--)
 				{
 					CopyRow(y1 - 1, y1);
 				}
+				OnLineCleared?.Invoke();
 			}
 		}
+
+		return isCleared;
 	}
 
 	private bool IsRowFull(int y)
@@ -106,14 +121,17 @@ public class TetrisModel
 	{
 		for (int x = 0; x < Dimensions.x; x++)
 		{
-			Field[x, toY] = Field[x, fromY];
+			if(fromY >= 0)
+				Field[x, toY] = Field[x, fromY];
+			else
+				Field[x, toY] = default;
 		}
 	}
 
 	public bool IsFigureOverlapping()
 	{
 		int4 image = _figure.GetImage();
-		
+
 		for (int i = 0; i < 4; i++)
 		{
 			for (int j = 0; j < 4; j++)
@@ -128,7 +146,7 @@ public class TetrisModel
 					return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -136,7 +154,7 @@ public class TetrisModel
 	{
 		Array.Copy(Field, _viewBuffer, Field.Length);
 		MergeFigure(_viewBuffer, true);
-		
+
 		return _viewBuffer;
 	}
 
@@ -144,17 +162,22 @@ public class TetrisModel
 	{
 		var oldPos = _figure.Position;
 		_figure.Position += dir;
-		
+
 		if (!IsFigureOverlapping())
 		{
 			if (countMove)
 				IncMoves();
+			OnChanged?.Invoke();
 			return true;
 		}
-		
+
 		_figure.Position = oldPos;
-		if (dir.Equals(new int2(0, 1))) 
+		if (dir.Equals(new int2(0, 1)))
+		{
 			FreezeFigure();
+			OnChanged?.Invoke();
+		}
+		
 		return false;
 	}
 
@@ -163,13 +186,14 @@ public class TetrisModel
 		while (MoveFigure(new int2(0, 1), false))
 		{
 		}
+
 		IncMoves();
 	}
 
 	public void RotateFigure()
 	{
 		_figure.Rotate();
-		if(IsFigureOverlapping())
+		if (IsFigureOverlapping())
 			_figure.Rotate(-1);
 		else
 			IncMoves();
@@ -179,5 +203,24 @@ public class TetrisModel
 	{
 		MoveCount++;
 		TotalMoveCount++;
+	}
+
+	public TetrisFieldSnapshot GetFieldSnapshot()
+	{
+		var inputResult = new List<int>(Dimensions.x * Dimensions.y);
+		var viewData = GetViewData();
+		for (int y = 0; y < Dimensions.y; y++)
+		{
+			for (int x = 0; x < Dimensions.x; x++)
+			{
+				var element = viewData[x, y];
+				int inputElement = 0;
+				if (element.Occupied)
+					inputElement = element.IsFigure ? -(element.Color + 1) : element.Color + 1;
+				inputResult.Add(inputElement);
+			}
+		}
+
+		return new TetrisFieldSnapshot {Data = inputResult};
 	}
 }

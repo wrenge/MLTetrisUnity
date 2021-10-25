@@ -19,12 +19,12 @@ public struct Figure
 	private static readonly int4[][] Figures =
 	{
 		new[] {new int4(1, 5, 9, 13), new int4(4, 5, 6, 7)},
-		new[] {new int4(4, 5, 9, 10), new int4(2, 6, 5, 9)},
-		new[] {new int4(6, 7, 9, 10), new int4(1, 5, 6, 10)},
-		new[] {new int4(1, 2, 5, 9), new int4(0, 4, 5, 6), new int4(1, 5, 9, 8), new int4(4, 5, 6, 10)},
-		new[] {new int4(1, 2, 6, 10), new int4(5, 6, 7, 9), new int4(2, 6, 10, 11), new int4(3, 5, 6, 7)},
-		new[] {new int4(1, 4, 5, 6), new int4(1, 4, 5, 9), new int4(4, 5, 6, 9), new int4(1, 5, 6, 9)},
-		new[] {new int4(1, 2, 5, 6)},
+		// new[] {new int4(4, 5, 9, 10), new int4(2, 6, 5, 9)},
+		// new[] {new int4(6, 7, 9, 10), new int4(1, 5, 6, 10)},
+		// new[] {new int4(1, 2, 5, 9), new int4(0, 4, 5, 6), new int4(1, 5, 9, 8), new int4(4, 5, 6, 10)},
+		// new[] {new int4(1, 2, 6, 10), new int4(5, 6, 7, 9), new int4(2, 6, 10, 11), new int4(3, 5, 6, 7)},
+		// new[] {new int4(1, 4, 5, 6), new int4(1, 4, 5, 9), new int4(4, 5, 6, 9), new int4(1, 5, 6, 9)},
+		// new[] {new int4(1, 2, 5, 6)},
 	};
 
 	public int4 GetImage()

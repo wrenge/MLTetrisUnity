@@ -7,9 +7,9 @@ public class PlayerTetrisController : TetrisController
 	public float FigureDropPeriod = 1;
 	private const string SessionNumberKey = "Sessions";
 	private SessionInfo _sessionInfo;
-	private float _nextDropTime = 0;
+	private float _nextDropCounter = 0;
 
-	protected override void Reset()
+	public override void Reset()
 	{
 		Model.Seed++;
 		base.Reset();
@@ -24,10 +24,10 @@ public class PlayerTetrisController : TetrisController
 			Dimensions = Model.Dimensions,
 			Seed = Model.Seed
 		};
-		_nextDropTime = Time.time + FigureDropPeriod;
+		_nextDropCounter = FigureDropPeriod;
 	}
 
-	protected override void OnUpdate()
+	protected override void OnUpdate(float deltaTime)
 	{
 		if(Model.CanPlay)
 		{
@@ -41,8 +41,9 @@ public class PlayerTetrisController : TetrisController
 				MakeMove(TetrisMove.Rotate);
 			if (Input.GetKeyDown(KeyCode.Space))
 				MakeMove(TetrisMove.Jump);
-			if (Time.time >= _nextDropTime)
+			if (_nextDropCounter <= 0)
 				MakeMove(TetrisMove.Ignore);
+			_nextDropCounter -= deltaTime;
 		}
 	}
 
@@ -51,7 +52,7 @@ public class PlayerTetrisController : TetrisController
 		if(move != TetrisMove.Reset && move != TetrisMove.Quit)
 			_sessionInfo.Moves.Add(new MoveInfo(Model, move));
 		if (move == TetrisMove.Down || move == TetrisMove.Jump || move == TetrisMove.Ignore)
-			_nextDropTime = Time.time + FigureDropPeriod;
+			_nextDropCounter = FigureDropPeriod;
 
 		base.MakeMove(move);
 	}

@@ -10,7 +10,7 @@ public class ReplayTetrisController : TetrisController
 		_moves = moves;
 	}
 
-	protected override void OnUpdate()
+	protected override void OnUpdate(float deltaTime)
 	{
 		if(_counter >= _moves.Count)
 			return;
@@ -20,7 +20,7 @@ public class ReplayTetrisController : TetrisController
 		_counter++;
 	}
 
-	protected override void Reset()
+	public override void Reset()
 	{
 		base.Reset();
 		_counter = 0;

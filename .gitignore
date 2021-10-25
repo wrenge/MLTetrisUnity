@@ -101,3 +101,4 @@ crashlytics-build.properties
 .DS_Store
 .dir-locals.el
 UserSettings/
+venv/

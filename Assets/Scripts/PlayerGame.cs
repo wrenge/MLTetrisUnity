@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class PlayerGame : MonoBehaviour
 {
+	public bool IsPaused;
+	
 	[SerializeField] private uint _seed = 2;
 	[SerializeField] private float _dropPeriod = 1;
 	
@@ -28,7 +30,8 @@ public class PlayerGame : MonoBehaviour
 
 	private void Update()
 	{
-		_controller.Update();
+		if(IsPaused)
+			_controller.Update(Time.deltaTime);
 	}
 
 	private void OnDestroy()
